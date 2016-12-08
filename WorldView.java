@@ -16,6 +16,7 @@ class WorldView implements ActionListener {
    JLabel displayLabel;
    JButton nextButton;
    JButton prevButton;
+   JButton restartButton;
    JPanel choicesPanel;
    ButtonGroup choicesButtons;
    ResourceBundle resources;
@@ -208,6 +209,11 @@ class WorldView implements ActionListener {
        buttonPanel.add(nextButton);
        nextButton.addActionListener(this);
 
+       restartButton = new JButton(resources.getString("Restart"));
+       restartButton.setActionCommand("Restart");
+       buttonPanel.add(restartButton);
+       restartButton.addActionListener(this);
+
        return buttonPanel;
      }
 
@@ -239,29 +245,27 @@ class WorldView implements ActionListener {
      }
 
      private void determineButtonsStates(PrimitiveValue fv) throws Exception {
-       if (isStateFinal(fv)) {
-         setNextButton("Restart");
+       if (isState(fv, "final")) {
          setButtonVisibility(prevButton, true);
-       } else if (isStateInitial(fv)) {
-         setNextButton("Next");
+         setButtonVisibility(nextButton, false);
+         setButtonVisibility(restartButton, true);
+       } else if (isState(fv, "initial")) {
          setButtonVisibility(prevButton, false);
-       } else {
-         setNextButton("Next");
+         setButtonVisibility(nextButton, true);
+         setButtonVisibility(restartButton, false);
+       } else if (isState(fv, "temp")) {
          setButtonVisibility(prevButton, true);
+         setButtonVisibility(nextButton, true);
+         setButtonVisibility(restartButton, true);
+       } else {
+         setButtonVisibility(prevButton, true);
+         setButtonVisibility(nextButton, true);
+         setButtonVisibility(restartButton, false);
        }
      }
 
-     private boolean isStateFinal(PrimitiveValue fv) throws Exception {
-       return fv.getFactSlot("state").toString().equals("final");
-     }
-
-     private boolean isStateInitial(PrimitiveValue fv) throws Exception {
-       return fv.getFactSlot("state").toString().equals("initial");
-     }
-
-     private void setNextButton(String type) {
-       nextButton.setActionCommand(type);
-       nextButton.setText(resources.getString(type));
+     private boolean isState(PrimitiveValue fv, String stateName) throws Exception {
+       return fv.getFactSlot("state").toString().equals(stateName);
      }
 
      private void setButtonVisibility(JButton button, boolean visible) {

@@ -37,6 +37,7 @@
   =>
   (assert (UI-state (display god.exists.query)
                     (relation-asserted god-exists)
+                    (state running)
                     (response Yes)
                     (valid-answers Yes No DontKnow DontCare)))
 )
@@ -46,6 +47,7 @@
   =>
   (assert (UI-state (display gods.more.query)
                     (relation-asserted more-gods)
+                    (state running)
                     (response Yes)
                     (valid-answers Yes No)))
 )
@@ -55,6 +57,7 @@
   =>
   (assert (UI-state (display god.control.query)
                     (relation-asserted god-control)
+                    (state running)
                     (response Yes)
                     (valid-answers Yes No)))
 )
@@ -64,6 +67,7 @@
   =>
   (assert (UI-state (display god.independent.query)
                     (relation-asserted god-independent)
+                    (state running)
                     (response Yes)
                     (valid-answers Yes No)))
 )
@@ -73,6 +77,7 @@
   =>
   (assert (UI-state (display god.in.all.query)
                     (relation-asserted god-in-all)
+                    (state running)
                     (response Yes)
                     (valid-answers Yes No)))
 )
@@ -82,8 +87,29 @@
   =>
   (assert (UI-state (display god.committed.to.world.query)
                     (relation-asserted god-commited)
+                    (state running)
                     (response Yes)
                     (valid-answers Yes No)))
+)
+
+(defrule determine-world-part-of-god
+  (logical (god-in-all No))
+  =>
+  (assert (UI-state (display world.part.of.god.query)
+                    (relation-asserted world-part-of-god)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
+
+(defrule determine-meaning-in-world
+  (logical (or (atheist Yes) (apatheist Yes) (agnostic Yes)))
+  =>
+  (assert (UI-state (display meaning.in.world.query)
+                    (relation-asserted meaning-in-world)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No DontKnow DontCare)))
 )
 
 ;;;*************************
@@ -95,8 +121,9 @@
   =>
   (assert (UI-state (display agnostic.temp.result)
                     (relation-asserted agnostic)
+                    (state temp)
                     (response Yes)
-                    (valid-answers Yes No)))
+                    (valid-answers Yes)))
 )
 
 (defrule apatheist-temp-conclusion
@@ -104,8 +131,9 @@
   =>
   (assert (UI-state (display apatheist.temp.result)
                     (relation-asserted apatheist)
+                    (state temp)
                     (response Yes)
-                    (valid-answers Yes No)))
+                    (valid-answers Yes)))
 )
 
 (defrule atheist-temp-conclusion
@@ -113,8 +141,9 @@
   =>
   (assert (UI-state (display atheist.temp.result)
                     (relation-asserted atheist)
+                    (state temp)
                     (response Yes)
-                    (valid-answers Yes No)))
+                    (valid-answers Yes)))
 )
 
 ;;;*************************
@@ -129,23 +158,44 @@
 )
 
 (defrule agnostic-conclusion
-  (logical (agnostic No))
+  (logical (meaning-in-world DontKnow))
   =>
   (assert (UI-state (display agnostic.result)
                     (state final)))
 )
 
 (defrule apatheist-conclusion
-  (logical (apatheist No))
+  (logical (meaning-in-world DontCare))
   =>
   (assert (UI-state (display apatheist.result)
                     (state final)))
 )
 
-(defrule atheist-conclusion
-  (logical (atheist No))
+(defrule deist-conclusion
+  (logical (or (god-control No) (god-commited No)))
   =>
-  (assert (UI-state (display atheist.result)
+  (assert (UI-state (display deist.result)
+                    (state final)))
+)
+
+(defrule pantheist-conclusion
+  (logical (god-in-all Yes))
+  =>
+  (assert (UI-state (display pantheist.result)
+                    (state final)))
+)
+
+(defrule world-god-relation-question-conclusion
+  (logical (world-part-of-god No))
+  =>
+  (assert (UI-state (display world.god.relation.question.result)
+                    (state final)))
+)
+
+(defrule panentheist-conclusion
+  (logical (world-part-of-god Yes))
+  =>
+  (assert (UI-state (display panentheist.result)
                     (state final)))
 )
 
