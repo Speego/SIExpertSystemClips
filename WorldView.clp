@@ -102,6 +102,37 @@
                     (valid-answers Yes No)))
 )
 
+(defrule determine-god-personal
+  (logical (theist Yes))
+  =>
+  (assert (UI-state (display god.personal.query)
+                    (relation-asserted god-personal)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
+
+(defrule determine-god-jesus
+  (logical (god-personal Yes))
+  =>
+  (assert (UI-state (display god.jesus.query)
+                    (relation-asserted god-jesus)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
+
+(defrule determine-god-salvation
+  (logical (god-jesus Yes))
+  =>
+  (assert (UI-state (display god.salvation.query)
+                    (relation-asserted god-salvation)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
+
+
 (defrule determine-meaning-in-world
   (logical (or (atheist Yes) (apatheist Yes) (agnostic Yes)))
   =>
@@ -112,6 +143,45 @@
                     (valid-answers Yes No DontKnow DontCare)))
 )
 
+(defrule determine-meaning-in-experience
+  (logical (meaning-in-world Yes))
+  =>
+  (assert (UI-state (display meaning.in.experience.query)
+                    (relation-asserted meaning-in-experience)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
+
+(defrule determine-meaning-in-human
+  (logical (meaning-in-experience No))
+  =>
+  (assert (UI-state (display meaning.in.human.query)
+                    (relation-asserted meaning-in-human)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
+
+(defrule determine-meaning-in-nature
+  (logical (meaning-in-human No))
+  =>
+  (assert (UI-state (display meaning.in.nature.query)
+                    (relation-asserted meaning-in-nature)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
+
+(defrule determine-meaning-different-for-each
+  (logical (meaning-in-nature No))
+  =>
+  (assert (UI-state (display meaning.different.for.each.query)
+                    (relation-asserted meaning-different-for-each)
+                    (state running)
+                    (response Yes)
+                    (valid-answers Yes No)))
+)
 ;;;*************************
 ;;;* TEMPORARY CONCLUSION RULES *
 ;;;*************************
@@ -146,23 +216,19 @@
                     (valid-answers Yes)))
 )
 
+(defrule theist-temp-conclusion
+  (logical (god-commited Yes))
+  =>
+  (assert (UI-state (display theist.temp.result)
+                    (relation-asserted theist)
+                    (state temp)
+                    (response Yes)
+                    (valid-answers Yes)))
+)
+
 ;;;*************************
 ;;;* FINAL CONCLUSION RULES *
 ;;;*************************
-
-(defrule polytheist-conclusion
-  (logical (more-gods Yes))
-  =>
-  (assert (UI-state (display polytheist.result)
-                    (state final)))
-)
-
-(defrule agnostic-conclusion
-  (logical (meaning-in-world DontKnow))
-  =>
-  (assert (UI-state (display agnostic.result)
-                    (state final)))
-)
 
 (defrule apatheist-conclusion
   (logical (meaning-in-world DontCare))
@@ -171,10 +237,17 @@
                     (state final)))
 )
 
-(defrule deist-conclusion
-  (logical (or (god-control No) (god-commited No)))
+(defrule agnostic-conclusion
+  (logical (or (meaning-in-world DontKnow) (god-personal No)))
   =>
-  (assert (UI-state (display deist.result)
+  (assert (UI-state (display agnostic.result)
+                    (state final)))
+)
+
+(defrule polytheist-conclusion
+  (logical (more-gods Yes))
+  =>
+  (assert (UI-state (display polytheist.result)
                     (state final)))
 )
 
@@ -185,10 +258,17 @@
                     (state final)))
 )
 
-(defrule world-god-relation-question-conclusion
-  (logical (world-part-of-god No))
+(defrule deist-conclusion
+  (logical (or (god-control No) (god-commited No)))
   =>
-  (assert (UI-state (display world.god.relation.question.result)
+  (assert (UI-state (display deist.result)
+                    (state final)))
+)
+
+(defrule christian-theist-conclusion
+  (logical (god-salvation Yes))
+  =>
+  (assert (UI-state (display christian.theist.result)
                     (state final)))
 )
 
@@ -196,6 +276,69 @@
   (logical (world-part-of-god Yes))
   =>
   (assert (UI-state (display panentheist.result)
+                    (state final)))
+)
+
+(defrule nihilist-conclusion
+  (logical (meaning-in-world No))
+  =>
+  (assert (UI-state (display nihilist.result)
+                    (state final)))
+)
+
+(defrule humanist-conclusion
+  (logical (meaning-in-human Yes))
+  =>
+  (assert (UI-state (display humanist.result)
+                    (state final)))
+)
+
+(defrule naturalist-conclusion
+  (logical (meaning-in-nature Yes))
+  =>
+  (assert (UI-state (display naturalist.result)
+                    (state final)))
+)
+
+(defrule existentialist-conclusion
+  (logical (meaning-in-experience Yes))
+  =>
+  (assert (UI-state (display existentialist.result)
+                    (state final)))
+)
+
+(defrule relativist-conclusion
+  (logical (meaning-different-for-each Yes))
+  =>
+  (assert (UI-state (display relativist.result)
+                    (state final)))
+)
+
+(defrule world-god-relation-question-conclusion
+  (logical (world-part-of-god No))
+  =>
+  (assert (UI-state (display world.god.relation.question.result)
+                    (state final)))
+)
+
+(defrule know-god-question-conclusion
+  (logical (god-jesus No))
+  =>
+  (assert (UI-state (display know.god.question.result)
+                    (state final)))
+)
+
+(defrule salvation-question-conclusion
+  (logical (god-salvation No))
+  =>
+  (assert (UI-state (display salvation.question.result)
+                    (state final)))
+)
+
+(defrule meaning-question-conclusion
+  (logical (meaning-different-for-each No))
+  =>
+  (assert (UI-state (display meaning.question.result)
                     (state final)))
 )
 
